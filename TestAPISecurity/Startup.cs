@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TestAPISecurity.Authentication;
-
+using ApiKeyAuth;
 namespace TestAPISecurity
 {
     public class Startup
@@ -25,25 +25,9 @@ namespace TestAPISecurity
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddAuthorization(authConfig =>
-            {
-                authConfig.AddPolicy("ApiKeyPolicy",
-                    policyBuilder => policyBuilder
-                        .AddRequirements(new ApiKeyRequirement(new[] { "my-secret-key" })));
-            });
-            services.AddTransient<IAuthorizationHandler, ApiKeyRequirementHandler>();
+        {            
+            services.AddApiKeyAuth("ApiKeyPolicy", new[] { "my-secret-key" });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            /*ptions =>
-            {
-                // All endpoints need authorization using our custom authorization filter
-                options.Filters.Add(new CustomAuthorizeFilter(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()));
-
-            })*/
-
-
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
